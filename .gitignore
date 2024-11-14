@@ -30,3 +30,27 @@
 *.exe
 *.out
 *.app
+
+# Build directory
+build/
+**/build/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# vallado software for validation
+*vallado-software-master/
+
+# Data files
+.data/*
+**/*.csv
+data/*.csv
+# Plot files
+plots/*
+
+# Image files
+!docs/images/
+!docs/images/mission_dashboard.png
