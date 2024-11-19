@@ -50,7 +50,7 @@ mkdir build && cd build
 
 ```bash
 cmake ..
-make -j$(nproc)
+make
 ```
 
 4. Run the simulation:
@@ -68,20 +68,14 @@ The project uses Google Test for unit testing. To run the tests:
 1. Build the tests (they are built automatically with the main project):
 
 ```bash
-cmake .. -DBUILD_TESTING=ON
-make -j$(nproc)
+cmake ..
+make
 ```
 
 2. Run all tests:
 
 ```bash
-ctest --output-on-failure
-```
-
-Or run tests directly for more detailed output:
-
-```bash
-./tests/unit_tests
+./bin/unit_tests
 ```
 
 Individual test suites can be run using Google Test filters:

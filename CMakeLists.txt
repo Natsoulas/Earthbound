@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(Earthbound)
 
+# Enable testing
+include(CTest)
+enable_testing()
+
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
