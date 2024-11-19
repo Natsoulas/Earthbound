@@ -36,7 +36,7 @@ You can install the required Python packages using pip:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/Earthbound.git
+git clone https://github.com/Natsoulas/Earthbound.git
 cd Earthbound
 ```
 
