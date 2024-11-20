@@ -1,6 +1,15 @@
 # Earthbound
 This repo will serve as a test bed for simulating interesting Near-Earth satellite and space station flight concepts from a guidance and controls perspective.
 
+<div align="center">
+
+[![C++17](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)](https://en.cppreference.com/w/cpp/17)
+[![CMake](https://img.shields.io/badge/CMake-3.10+-green.svg?style=flat&logo=cmake)](https://cmake.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://github.com/Natsoulas/Earthbound)
+
+</div>
+
 ## Overview
 At the moment, this simulation implements a basic satellite dynamics model in Low Earth Orbit (LEO), including:
 
@@ -14,30 +23,66 @@ At the moment, this simulation implements a basic satellite dynamics model in Lo
 The GCRS frame serves as our primary inertial reference frame (equivalent to ECI for most applications), with its xy-plane aligned with the Earth's equator. This makes it particularly well-suited for LEO satellite applications since most orbital perturbations are symmetric about the equator.
 
 ## Dependencies
-- C++17 or later
-- CMake 3.10 or later
-- Eigen3 (header-only linear algebra library)
-- ERFA (Essential Routines for Fundamental Astronomy) - automatically built from source
+
+<div align="center">
+
+| Core Dependencies | Version | Description |
+|------------------|---------|-------------|
+| ![C++](https://img.shields.io/badge/C++-17+-00599C?style=flat&logo=c%2B%2B) | 17+ | Core language |
+| ![CMake](https://img.shields.io/badge/CMake-3.10+-064F8C?style=flat&logo=cmake) | 3.10+ | Build system |
+| ![Eigen](https://img.shields.io/badge/Eigen-3-0056B3?style=flat) | 3.x | Linear algebra (included as submodule) |
+| ![ERFA](https://img.shields.io/badge/ERFA-latest-orange?style=flat) | Latest | Astronomy routines |
+| ![GTest](https://img.shields.io/badge/GoogleTest-latest-success?style=flat) | Latest | Testing framework |
+
+</div>
+
+### Platform-Specific Setup
+<details>
+<summary>macOS</summary>
+
+```bash
+brew install cmake googletest
+```
+</details>
+
+<details>
+<summary>Linux (Ubuntu/Debian)</summary>
+
+```bash
+sudo apt-get install cmake libgtest-dev
+```
+</details>
+
+<details>
+<summary>Windows</summary>
+
+1. Install [CMake](https://cmake.org/download/)
+2. Install [Google Test](https://github.com/google/googletest/releases)
+3. Install Visual Studio with C++ development tools
+</details>
 
 ## Visualization
-The project includes a Python script for visualizing simulation results. To run the visualization:
 
-### Python Dependencies
-- Python 3.7+
-- NumPy
-- Pandas
-- Matplotlib
-- Cartopy (for geographic plotting)
+<div align="center">
 
-You can install the required Python packages using pip:
+| Python Dependencies | Version |
+|--------------------|---------|
+| ![Python](https://img.shields.io/badge/Python-3.7+-3776AB?style=flat&logo=python) | 3.7+ |
+| ![NumPy](https://img.shields.io/badge/NumPy-latest-013243?style=flat&logo=numpy) | Latest |
+| ![Pandas](https://img.shields.io/badge/Pandas-latest-150458?style=flat&logo=pandas) | Latest |
+| ![Matplotlib](https://img.shields.io/badge/Matplotlib-latest-11557c?style=flat) | Latest |
+| ![Cartopy](https://img.shields.io/badge/Cartopy-latest-orange?style=flat) | Latest |
+
+</div>
 
 ## Building and Running
 
-1. Clone the repository:
+1. Clone the repository and initialize submodules:
 
 ```bash
 git clone https://github.com/Natsoulas/Earthbound.git
 cd Earthbound
+git submodule update --init --recursive
 ```
 
 2. Create and enter build directory:
@@ -48,15 +93,28 @@ mkdir build && cd build
 
 3. Configure and build the project:
 
+#### macOS/Linux
 ```bash
 cmake ..
 make
 ```
 
+#### Windows (using Visual Studio)
+```bash
+cmake -G "Visual Studio 17 2022" ..
+cmake --build . --config Release
+```
+
 4. Run the simulation:
 
+#### macOS/Linux
 ```bash
 ./Earthbound
+```
+
+#### Windows
+```bash
+.\Release\Earthbound.exe
 ```
 
 This will generate output files in the `output` directory containing the simulation results.
@@ -74,14 +132,21 @@ make
 
 2. Run all tests:
 
+#### macOS/Linux
 ```bash
 ./bin/unit_tests
+```
+
+#### Windows
+```bash
+.\bin\Release\unit_tests.exe
 ```
 
 Individual test suites can be run using Google Test filters:
 
 ```bash
-./tests/unit_tests --gtest_filter=OrbitDynamics.*
+./bin/unit_tests --gtest_filter=TestSuiteName.TestName  # macOS/Linux
+.\bin\Release\unit_tests.exe --gtest_filter=TestSuiteName.TestName  # Windows
 ```
 
 ## Visualization
