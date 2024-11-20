@@ -16,6 +16,8 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import cartopy.mpl.gridliner as gd
 from matplotlib.widgets import Button
+import cartopy.feature as cfeature
+import cartopy.mpl.ticker as mticker
 
 # Add this near the top of the file, after imports but before any other functions
 def add_gradient_background(ax):
@@ -52,8 +54,8 @@ plt.rcParams.update({
     'legend.edgecolor': '#666666'
 })
 
-# Define a modern color palette
-colors = ['#00b4d8', '#f72585', '#4cc9f0', '#7209b7', '#48cae4', '#3a0ca3']
+# Define a modern color palette with more distinct colors
+colors = ['#4cc9f0', '#f72585', '#ffd60a', '#7209b7', '#00f5d4', '#ff9e00']
 plt.rcParams['axes.prop_cycle'] = plt.cycler(color=colors)
 
 # Get absolute paths
@@ -111,41 +113,70 @@ def create_dashboard(fig):
     def create_orbit_tab(event=None):
         global buttons
         fig.clear()
-        gs = fig.add_gridspec(2, 2, height_ratios=[1.5, 1], top=0.9)
         
-        # Ground Track (large, top right)
-        ax_map = fig.add_subplot(gs[0, 1:], projection=ccrs.PlateCarree())
+        # Adjust gridspec to add more spacing
+        gs = fig.add_gridspec(2, 2, height_ratios=[1.5, 1], top=0.9, bottom=0.1,
+                             hspace=0.3, wspace=0.3)  # Increased horizontal and vertical spacing
+        
+        # Ground Track (full width, top)
+        ax_map = fig.add_subplot(gs[0, :], projection=ccrs.PlateCarree())
         ax_map.add_feature(cfeature.LAND, facecolor='#2d2d2d', edgecolor='#666666')
         ax_map.add_feature(cfeature.OCEAN, facecolor='#1e1e1e')
         ax_map.add_feature(cfeature.COASTLINE, edgecolor='#4cc9f0', linewidth=1)
         
+        # Add gridlines
+        gl = ax_map.gridlines(draw_labels=True, x_inline=False, y_inline=False,
+                             linewidth=0.5, color='gray', alpha=0.5, linestyle='--')
+        
+        # Customize gridline labels
+        gl.top_labels = False  # Don't show labels at top
+        gl.right_labels = False  # Don't show labels at right
+        gl.xlabel_style = {'size': 8, 'color': 'white'}
+        gl.ylabel_style = {'size': 8, 'color': 'white'}
+        
+        # Set grid line spacing using Cartopy's methods
+        gl.xlines = True
+        gl.ylines = True
+        gl.xlocator = mticker.LongitudeLocator(nbins=6)  # ~60 degree spacing
+        gl.ylocator = mticker.LatitudeLocator(nbins=6)   # ~30 degree spacing
+        gl.xformatter = mticker.LongitudeFormatter()
+        gl.yformatter = mticker.LatitudeFormatter()
+        
         # Plot ground track with time-based coloring
         jumps = np.where(np.abs(np.diff(df['lon'])) > 300)[0]
+        norm = plt.Normalize(df['time'].min(), df['time'].max())
+        
         for lon_seg, lat_seg, time_seg in zip(np.split(df['lon'], jumps + 1),
                                             np.split(df['lat'], jumps + 1),
                                             np.split(df['time'], jumps + 1)):
             points = np.array([lon_seg, lat_seg]).T.reshape(-1, 1, 2)
             segments = np.concatenate([points[:-1], points[1:]], axis=1)
-            lc = LineCollection(segments, cmap='plasma', 
-                              norm=plt.Normalize(df['time'].min(), df['time'].max()))
+            lc = LineCollection(segments, cmap='plasma', norm=norm)
             lc.set_array(time_seg[:-1])
             ax_map.add_collection(lc)
+        
+        # Add colorbar with adjusted positioning
+        cbar = plt.colorbar(lc, ax=ax_map, orientation='horizontal', 
+                           pad=0.08,  # Increased padding between plot and colorbar
+                           fraction=0.015)  # Slightly smaller colorbar height
+        cbar.set_label('Mission Elapsed Time [hours]')
+        cbar.ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{x/3600:.1f}'))
         
         # Add start/end markers
         ax_map.plot(df['lon'].iloc[0], df['lat'].iloc[0], 'go', label='Start')
         ax_map.plot(df['lon'].iloc[-1], df['lat'].iloc[-1], 'ro', label='End')
         ax_map.legend()
         
-        # 3D Trajectory (top left)
-        ax_3d = fig.add_subplot(gs[0, 0], projection='3d')
+        # 3D Trajectory (bottom left)
+        ax_3d = fig.add_subplot(gs[1, 0], projection='3d')
         ax_3d.plot(df['x']/1000, df['y']/1000, df['z']/1000)
         ax_3d.set_xlabel('X [km]')
         ax_3d.set_ylabel('Y [km]')
         ax_3d.set_zlabel('Z [km]')
         ax_3d.set_title('Orbital Trajectory')
         
-        # Orbital Altitudes (bottom)
-        ax_alt = fig.add_subplot(gs[1, :])
+        # Orbital Altitudes (bottom right)
+        ax_alt = fig.add_subplot(gs[1, 1])
         ax_alt.plot(df['time']/3600, df['apogee_alt'], 'r-', label='Apogee')
         ax_alt.plot(df['time']/3600, df['perigee_alt'], 'b-', label='Perigee')
         ax_alt.axhline(y=800, color='k', linestyle='--', label='Target')
