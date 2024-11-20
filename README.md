@@ -1,4 +1,7 @@
-# Earthbound
+<div align="center">
+  <img src="docs/images/earthbound_logo.png" alt="Earthbound Logo" width="800"/>
+</div>
+
 This repo will serve as a test bed for simulating interesting Near-Earth satellite and space station flight concepts from a guidance and controls perspective.
 
 <div align="center">
