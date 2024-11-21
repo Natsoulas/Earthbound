@@ -13,6 +13,8 @@ This repo serves as a test bed for simulating interesting Near-Earth spacecraft 
 
 </div>
 
+> **⚠️ Note:** This project is primarily developed and tested on macOS. While Windows build instructions are provided, they have not been thoroughly verified. Users may encounter platform-specific issues when building on Windows.
+
 ## Overview
 At the moment, this simulation implements a basic satellite dynamics model in Low Earth Orbit (LEO), including:
 
