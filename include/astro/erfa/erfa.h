@@ -14,6 +14,7 @@
 
 #include "erfam.h"
 #include "math.h"
+#include "erfa_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -335,13 +336,14 @@ int eraGd2gce(double a, double f,
               double elong, double phi, double height, double xyz[3]);
 
 /* Astronomy/Timescales */
-int eraD2dtf(const char *scale, int ndp, double d1, double d2,
-             int *iy, int *im, int *id, int ihmsf[4]);
+ERFA_EXPORT int eraD2dtf(const char *scale, int ndp, double d1, double d2,
+                        int *iy, int *im, int *id, int ihmsf[4]);
 int eraDat(int iy, int im, int id, double fd, double *deltat);
 double eraDtdb(double date1, double date2,
                double ut, double elong, double u, double v);
-int eraDtf2d(const char *scale, int iy, int im, int id,
-             int ihr, int imn, double sec, double *d1, double *d2);
+ERFA_EXPORT int eraDtf2d(const char *scale, int iy, int im, int id,
+                        int ihr, int imn, double sec,
+                        double *d1, double *d2);
 int eraTaitt(double tai1, double tai2, double *tt1, double *tt2);
 int eraTaiut1(double tai1, double tai2, double dta,
               double *ut11, double *ut12);

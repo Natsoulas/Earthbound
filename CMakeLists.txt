@@ -18,6 +18,24 @@ if(APPLE)
 endif()
 find_package(GTest REQUIRED)
 
+# Create erfa_export.h if it doesn't exist
+file(WRITE ${CMAKE_SOURCE_DIR}/include/astro/erfa/erfa_export.h
+"#ifndef ERFA_EXPORT_H
+#define ERFA_EXPORT_H
+
+#ifdef _WIN32
+    #ifdef BUILDING_ERFA
+        #define ERFA_EXPORT __declspec(dllexport)
+    #else
+        #define ERFA_EXPORT __declspec(dllimport)
+    #endif
+#else
+    #define ERFA_EXPORT
+#endif
+
+#endif // ERFA_EXPORT_H
+")
+
 # Create ERFA library from source
 add_library(erfa STATIC
     include/astro/erfa/a2af.c
@@ -251,6 +269,7 @@ add_library(erfa STATIC
 
 target_include_directories(erfa PUBLIC
     ${CMAKE_SOURCE_DIR}/include/astro/erfa
+    ${CMAKE_SOURCE_DIR}/include/astro
 )
 
 # Set ERFA include directory
@@ -276,3 +295,8 @@ target_link_libraries(Earthbound PRIVATE
 add_subdirectory(test)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG -march=native")
+
+if(WIN32)
+    target_compile_definitions(erfa PRIVATE BUILDING_ERFA)
+    target_compile_definitions(Earthbound PRIVATE USING_ERFA) 
+endif()
